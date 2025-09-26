@@ -24,7 +24,7 @@ class Projectile(Entity):
             if self._collide_on_hitbox_enter else current_colliding
 
         for entity in active_collisions:
-            entity.take_damage(10)
+            entity.take_damage(10) # TODO: Fix this hardcoded damage
             self.take_damage(self._self_damage)
             if self._kill_on_collision:
                 self.kill()
