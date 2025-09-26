@@ -85,7 +85,11 @@ class CircleHitbox(Hitbox):
             raise TypeError(f"Uhhhhh... How did we get here?")
 
     def _is_colliding_with_rect(self, other: RectHitbox) -> bool:
-        return False # TODO: Implement accurate circle-rect collision
+        # The idea here is to find the closest point on the rectangle to the circle's center
+        closest_x = max(other.left, min(self.center.x, other.right))
+        closest_y = max(other.top, min(self.center.y, other.bottom))
+        distance_sqr = self.center.distance_squared_to(Vec(closest_x, closest_y))
+        return distance_sqr < self.radius * self.radius
 
     def _is_colliding_with_polygon(self, other: PolygonalHitbox) -> bool:
         return False # TODO: Implement accurate circle-polygon collision
@@ -110,6 +114,14 @@ class RectHitbox(Hitbox):
         self.right = self.center.x + self.width / 2
         self.bottom = self.center.y + self.height / 2
 
+    def set_position(self, center: Vec) -> None:
+        super().set_position(center)
+        # Remember to update rectangle sides!
+        self.left = center.x - self.size.x / 2
+        self.top = center.y - self.size.y / 2
+        self.right = center.x + self.size.x / 2
+        self.bottom = center.y + self.size.y / 2
+
     def is_colliding(self, other: Hitbox) -> bool:
         if isinstance(other, SimpleCircleHitbox):
             return other.is_colliding(self)
@@ -123,7 +135,11 @@ class RectHitbox(Hitbox):
             raise TypeError(f"Uhhhhh... How did we get here?")
 
     def _is_colliding_with_circle(self, other: CircleHitbox) -> bool:
-        return False # TODO: Implement accurate rect-circle collision
+        # The idea here is to find the closest point on the rectangle to the circle's center
+        closest_x = max(self.left, min(other.center.x, self.right))
+        closest_y = max(self.top, min(other.center.y, self.bottom))
+        distance_sqr = other.center.distance_squared_to(Vec(closest_x, closest_y))
+        return distance_sqr < other.radius * other.radius
 
     def _is_colliding_with_rect(self, other: RectHitbox) -> bool:
         return not (self.left > other.right or self.right < other.left or
@@ -134,7 +150,7 @@ class RectHitbox(Hitbox):
         return other.is_colliding(poly)
 
     def draw(self, target: pygame.Surface, camera_pos: Vec) -> None:
-        pygame.draw.rect(target, (255, 0, 0), (self.left - camera_pos.x, self.top - camera_pos.y, self.width, self.height), 2)
+        pygame.draw.rect(target, (255, 0, 0), (self.left - camera_pos.x, self.top - camera_pos.y, self.size.x, self.size.y), 2)
 
 class PolygonalHitbox(Hitbox):
     """

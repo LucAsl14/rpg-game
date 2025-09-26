@@ -13,7 +13,8 @@ from .spells.wall_of_fire import WallOfFire
 class Player(Entity):
     def __init__(self, scene: MainScene) -> None:
         size = Vec(Image.get("player").size)
-        super().__init__(scene, "DEFAULT", PolygonalHitbox.from_rect(Vec(), size.x, size.y), 100)
+        # super().__init__(scene, "DEFAULT", PolygonalHitbox.from_rect(Vec(), size.x, size.y), 100)
+        super().__init__(scene, "DEFAULT", RectHitbox(Vec(), size.x, size.y), 100) # Making the player a rectangle for now
         # band-aid fix to scene not considered MainScene
         self.scene = scene
 
