@@ -92,7 +92,38 @@ class CircleHitbox(Hitbox):
         return distance_sqr < self.radius * self.radius
 
     def _is_colliding_with_polygon(self, other: PolygonalHitbox) -> bool:
-        return False # TODO: Implement accurate circle-polygon collision
+        # Check if circle center is inside polygon (assuming the polygon is defined counter-clockwise)
+        inside = True
+        poly = other.get_hitbox()
+        for i in range(len(poly)):
+            point1 = poly[i]
+            point2 = poly[(i+1) % len(poly)]
+            edge = point2 - point1
+            to_center = self.center - point1
+            # the cross product is positive if the point is to the left of the edge
+            cross = edge.x * to_center.y - edge.y * to_center.x
+            if cross < 0:
+                inside = False
+                break
+        if inside:
+            # if the center is to the left of all edges, it's inside
+            return True
+
+        # Check distance to each edge
+        for i in range(len(poly)):
+            point1 = poly[i]
+            point2 = poly[(i+1) % len(poly)]
+            edge = point2 - point1
+            edge_length_sqr = edge.length_squared()
+
+            # standard projection formula
+            t = max(0, min(1, (self.center - point1).dot(edge) / edge_length_sqr))
+            projection = point1 + edge * t
+
+            distance_sqr = self.center.distance_squared_to(projection)
+            if distance_sqr < self.radius * self.radius:
+                return True
+        return False
 
     def draw(self, target: pygame.Surface, camera_pos: Vec) -> None:
         pygame.draw.circle(target, (255, 0, 0), self.center - camera_pos, self.radius, 2)
@@ -134,13 +165,6 @@ class RectHitbox(Hitbox):
         else:
             raise TypeError(f"Uhhhhh... How did we get here?")
 
-    def _is_colliding_with_circle(self, other: CircleHitbox) -> bool:
-        # The idea here is to find the closest point on the rectangle to the circle's center
-        closest_x = max(self.left, min(other.center.x, self.right))
-        closest_y = max(self.top, min(other.center.y, self.bottom))
-        distance_sqr = other.center.distance_squared_to(Vec(closest_x, closest_y))
-        return distance_sqr < other.radius * other.radius
-
     def _is_colliding_with_rect(self, other: RectHitbox) -> bool:
         return not (self.left > other.right or self.right < other.left or
                     self.top > other.bottom or self.bottom < other.top)
@@ -166,9 +190,9 @@ class PolygonalHitbox(Hitbox):
         """
         return cls(center, [
             Vec(-dx/2, -dy/2),
-            Vec( dx/2, -dy/2),
-            Vec( dx/2,  dy/2),
             Vec(-dx/2,  dy/2),
+            Vec( dx/2,  dy/2),
+            Vec( dx/2, -dy/2),
         ])
 
     @classmethod
