@@ -14,15 +14,17 @@ class Fireball(Spell):
 
 class FireProjectile(Projectile):
     def __init__(self, scene: MainScene, master: Entity, pos: Vec) -> None:
-        super().__init__(scene, master, pos, 1, 5)
+        super().__init__(scene, master, pos, 1, 5, 10)
         self.set_kill_on_collision(True)
         self.radius = 0
 
     def charge(self, progress: float) -> None:
-        self.radius = 10 * progress
+        self.set_solidness(0.0)
+        self.radius = self.rad * progress
 
     def release(self, mouse_pos: Vec) -> None:
-        self.radius = 10
+        self.radius = self.rad
+        self.set_solidness(1.0)
         self.apply_impulse((mouse_pos - self.pos).normalize() * 800)
 
     def draw(self, target: pygame.Surface) -> None:

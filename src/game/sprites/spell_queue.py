@@ -1,6 +1,7 @@
 from __future__ import annotations
 from src.core import *
 from .spell_previews import LinePreview, AreaPreview, RectPreview, GustPreview
+from .spells import Fireball
 class SpellQueue(Sprite):
     def __init__(self, scene: MainScene) -> None:
         super().__init__(scene, "HUD")
@@ -43,7 +44,7 @@ class SpellQueue(Sprite):
                     "cooldown": 5,
                     "args": [],
                 },
-                "spell": placeholder_spell
+                "spell": Fireball
             },
             "kl": {
                 "aiming": {

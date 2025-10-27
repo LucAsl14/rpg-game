@@ -21,3 +21,4 @@ class SpellPreview(Sprite):
         # Only spend the spell from the queue, but don't spawn the actual spell
         self.scene.player.spell_queue.spend_top_spell()
         # Removed spell spawning code
+        self.scene.add(self.spell(self.scene, *self.args))
