@@ -9,7 +9,7 @@ class WallOfFire(Spell):
         super().__init__(scene)
 
         preview = self.add_action("create", WallOfFireSegmentPreview)
-        first_segment = self.add_action("create", WallOfFireSegment, scene.world_mouse_pos)
+        first_segment = self.add_action("create", WallOfFireSegment, scene.world_mouse_pos, self)
         self.add_action("call_until_true", self, "create_wall", first_segment)
         self.add_action("kill", preview)
 
@@ -26,7 +26,7 @@ class WallOfFire(Spell):
         diff = self.scene.world_mouse_pos - self.current_segment.pos
         while diff.length() > SEGMENT_RAD:
             new_pos = self.current_segment.pos + diff.normalize() * SEGMENT_RAD
-            new_segment = WallOfFireSegment(self.scene, new_pos)
+            new_segment = WallOfFireSegment(self.scene, new_pos, self)
             diff = self.scene.world_mouse_pos - new_pos
             self.scene.add(new_segment)
             self.current_segment = new_segment
@@ -37,23 +37,31 @@ class WallOfFire(Spell):
 
 class WallOfFireSegment(Entity):
     # NOTE: This could just become a reusable fire area effect
-    def __init__(self, scene: MainScene, pos: Vec) -> None:
+    def __init__(self, scene: MainScene, pos: Vec, spell_origin: Optional[WallOfFire]=None) -> None:
         super().__init__(scene, "GROUND", CircleHitbox(pos, 15), 1)
         self.set_movability(0.0) # immovable
         self.set_solidness(0.0) # (does not push out other entities)
         self.set_collision_ignore_classes(WallOfFireSegment)
         self.pos = pos
+        self.origin = spell_origin
         self.damage_timer = LoopTimer(0.2)
 
     def update(self, dt: float) -> None:
-        if self.damage_timer.done:
-            for entity in self.get_colliding_entities():
-                entity.take_damage(1)
+        if self.origin is None:
+            if self.damage_timer.done:
+                for entity in self.get_colliding_entities():
+                    entity.take_damage(1)
+        else:
+            if self.origin.segment_count >= 20:
+                self.origin = None
 
         super().update_position(dt)
 
     def draw(self, target: pygame.Surface) -> None:
-        pygame.draw.circle(target, FIRE, self.screen_pos, SEGMENT_RAD)
+        if self.origin is not None:
+            pygame.draw.circle(target, FIRE + (100,), self.screen_pos, SEGMENT_RAD)
+        else:
+            pygame.draw.circle(target, FIRE, self.screen_pos, SEGMENT_RAD)
 
 class WallOfFireSegmentPreview(Sprite):
     def __init__(self, scene: Scene) -> None:
