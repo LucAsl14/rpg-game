@@ -118,3 +118,7 @@ class Entity(Sprite):
         0.0 means the entity will not be moved at all, 1.0 means it will be
         moved will full force."""
         self.movability = movability
+
+    def kill(self) -> None:
+        self.scene.entity_buckets[self.prev_hash].remove(self)
+        super().kill()
