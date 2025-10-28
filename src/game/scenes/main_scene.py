@@ -38,6 +38,18 @@ class MainScene(Scene):
             for bucket in self.entity_buckets.values():
                 for entity in bucket:
                     entity.hitbox.draw(screen, self.camera.pos)
+        if Debug.on("grid"):
+            cam = self.camera
+            for x in range(0, screen.width + BUCKET_GRID_SIZE, BUCKET_GRID_SIZE):
+                color = (255, 0, 0) if ((x + cam.pos.x) // BUCKET_GRID_SIZE) == 0 \
+                    else (255, 255, 255) if ((x + cam.pos.x) // BUCKET_GRID_SIZE) % 5 == 0 \
+                    else (100, 100, 100)
+                pygame.draw.line(screen, color, (x - (cam.pos.x % BUCKET_GRID_SIZE), 0), (x - (cam.pos.x % BUCKET_GRID_SIZE), self.game.h))
+            for y in range(0, screen.height, BUCKET_GRID_SIZE):
+                color = (255, 0, 0) if ((y + cam.pos.y) // BUCKET_GRID_SIZE) == 0 \
+                    else (255, 255, 255) if ((y + cam.pos.y) // BUCKET_GRID_SIZE) % 5 == 0 \
+                    else (100, 100, 100)
+                pygame.draw.line(screen, color, (0, y - (cam.pos.y % BUCKET_GRID_SIZE)), (screen.width, y - (cam.pos.y % BUCKET_GRID_SIZE)))
 
     def spacial_hash_key(self, pos: Vec) -> Vec:
         return Vec(pos.x // BUCKET_GRID_SIZE, pos.y // BUCKET_GRID_SIZE)
