@@ -14,7 +14,7 @@ class Fireball(Spell):
 
 class FireProjectile(Projectile):
     def __init__(self, scene: MainScene, master: Entity, pos: Vec) -> None:
-        super().__init__(scene, master, pos, 1, 5, 10)
+        super().__init__(scene, master, pos, 1, 10, 5, 10)
         self.set_kill_on_collision(True)
         self.radius = 0
 

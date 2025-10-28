@@ -3,12 +3,13 @@ from src.core import *
 from .entity import Entity
 
 class Projectile(Entity):
-    def __init__(self, scene: MainScene, master: Entity, pos: Vec, hp: int, lifetime: int, rad: int) -> None:
+    def __init__(self, scene: MainScene, master: Entity, pos: Vec, hp: int, dmg: int, lifetime: int, rad: int) -> None:
         super().__init__(scene, "DEFAULT", CircleHitbox(pos, rad), hp)
         # TODO: Add damage groups (projectiles from enemies don't damage other enemies, etc.)
         self.set_collision_ignore_entities(master)
         self.lifetime = lifetime
         self.rad = rad
+        self.damage = dmg
         self.kill_timer = Timer(lifetime)
         self._kill_on_collision = False
         self._self_damage = 0

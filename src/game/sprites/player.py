@@ -10,6 +10,8 @@ from .spells.waterball import Waterball
 from .spells.fireball import Fireball
 from .spells.wall_of_fire import WallOfFire
 
+from .basic_enemy import BasicEnemy
+
 class Player(Entity):
     def __init__(self, scene: MainScene) -> None:
         size = Vec(Image.get("player").size)
@@ -43,7 +45,7 @@ class Player(Entity):
     def update_keys(self, dt: float) -> None:
         self.keys = pygame.key.get_pressed()
 
-        # movement keys
+        # movement keys TODO: diagonal movement normalization
         if self.keys[K_w]:
             self.apply_force(Vec(0, -PLAYER_ACC))
         if self.keys[K_s]:
@@ -80,7 +82,8 @@ class Player(Entity):
                         self.inventory.add(removed)
 
         if self.game.key_down == pygame.K_q:
-            self.scene.add(WallOfFire(self.scene))
+            # self.scene.add(WallOfFire(self.scene))
+            self.scene.add(BasicEnemy(self.scene, self.pos + Vec(uniform(-100, 100), uniform(-100, 100))))
 
     def update_surroundings(self) -> None:
         # something something about generating decorations im too lazy

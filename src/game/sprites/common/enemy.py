@@ -5,10 +5,13 @@ from abc import abstractmethod
 
 class Enemy(Entity):
     def __init__(self, scene: MainScene, hp: int, pos: Vec) -> None:
-        super().__init__(scene, hp, pygame.transform.rotate(Image.get("test"), 180), pos)
+        self.image = pygame.transform.rotate(Image.get("test"), 180)
+        super().__init__(scene, "DEFAULT", RectHitbox(Vec(pos), self.image.width, self.image.height), hp)
         self.scene = scene
-        self.scene.enemies.append(self)
         self.killed = False
+        self.damaged_timer = Timer(0.10)
+        self.damaged_timer.has_been_done = True
+        # TODO: add notice range, forget range
 
     def update(self, dt: float) -> None:
         self.update_movement(dt)
@@ -20,14 +23,15 @@ class Enemy(Entity):
 
     @abstractmethod
     def update_movement(self, dt: float):
-        pass
+        # Losing ~99.9% of the velocity after 1 second
+        # k = -ln(1 - 0.999) = ~6.9
+        self.apply_force(-self.vel * 6.9)
 
     def update_attack(self, dt: float):
         pass
 
     def kill(self):
         if not self.killed:
-            self.scene.enemies.remove(self)
             super().kill()
             self.killed = True
 
@@ -48,3 +52,17 @@ class Enemy(Entity):
         if self.is_near_player() and self.hitbox.is_colliding(self.scene.player.hitbox):
             return True
         return False
+
+    def take_damage(self, dmg: int) -> int:
+        self.damaged_timer.reset()
+        return super().take_damage(dmg)
+
+    def draw(self, target: pygame.Surface) -> None:
+        dmgtint = pygame.Surface(self.image.get_size()).convert_alpha()
+        dmgtint.fill((200, 0, 0))
+        if not self.damaged_timer.done:
+            tinted_image = self.image.copy()
+            tinted_image.blit(dmgtint, (0, 0), special_flags=BLEND_RGBA_MULT)
+            self.draw_centered(target, tinted_image)
+        else:
+            self.draw_centered(target, self.image)

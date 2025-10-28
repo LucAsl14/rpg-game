@@ -135,6 +135,8 @@ class RectHitbox(Hitbox):
         self.top = center.y - height / 2
         self.right = center.x + width / 2
         self.bottom = center.y + height / 2
+        self.width = width
+        self.height = height
 
     def expand(self, factor: float) -> None:
         self.width *= factor
