@@ -8,7 +8,7 @@ class Projectile(Entity):
         # TODO: Add damage groups (projectiles from enemies don't damage other enemies, etc.)
         self.set_collision_ignore_entities(master)
         self.lifetime = lifetime
-        self.rad = rad
+        self.rad = rad # initial radius
         self.damage = dmg
         self.kill_timer = Timer(lifetime)
         self._kill_on_collision = False
@@ -26,7 +26,7 @@ class Projectile(Entity):
             if self._collide_on_hitbox_enter else current_colliding
 
         for entity in active_collisions:
-            entity.take_damage(10) # TODO: Fix this hardcoded damage
+            entity.take_damage(self.damage, "projectile")
             self.take_damage(self._self_damage)
             if self._kill_on_collision:
                 self.kill()
