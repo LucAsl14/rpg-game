@@ -76,7 +76,7 @@ class Spell(Sprite):
         try:
             future, action, args, kwargs = self.current_action
             success, return_val = getattr(self, "_" + action)(*args, **kwargs)
-            if success:
+            if success and Debug.on("spell_messages"):
                 Log.debug(f"Executed action #{self.action_index}: {action} "
                           f"with args: {args}, kwargs: {kwargs}")
                 future.set_value(return_val)

@@ -2,3 +2,4 @@ debug = true
 info = true
 hitbox = true
 grid = true
+spell_messages = false
