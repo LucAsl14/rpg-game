@@ -27,29 +27,33 @@ class Waterball(Spell):
 
 class WaterProjectile(Projectile):
     def __init__(self, scene: MainScene, master: Entity, pos: Vec) -> None:
-        super().__init__(scene, master, pos, 1, 5)
+        super().__init__(scene, master, pos, 1, 5, 5, 20)
         self.set_kill_on_collision(True)
         self.radius = 0
         self.exploding = False
-        self.exploding_timer = Timer(0.1)
+        self.exploding_timer = Timer(0.05)
 
     def update(self, dt: float) -> None:
         if self.exploding:
-            self.radius = 20 + 100 * self.exploding_timer.progress
+            self.radius = self.rad + 100 * self.exploding_timer.progress
             if self.exploding_timer.done:
-                self.hitbox.expand(10)
+                self.hitbox.expand(6)
                 for entity in self.get_colliding_entities():
-                    entity.take_damage(10)
+                    entity.take_damage(self.damage, "water_explosion")
                 super().kill()
-                return
+            return
 
         super().update(dt)
 
     def charge(self, progress: float) -> None:
-        self.radius = 20 * progress
+        self.set_no_collision(True)
+        self.set_solidness(0.0)
+        self.radius = self.rad * progress
 
     def release(self, mouse_pos: Vec) -> None:
-        self.radius = 20
+        self.set_no_collision(False)
+        self.set_solidness(1.0)
+        self.radius = self.rad
         self.apply_impulse((mouse_pos - self.pos).normalize() * 400)
 
     def draw(self, target: pygame.Surface) -> None:

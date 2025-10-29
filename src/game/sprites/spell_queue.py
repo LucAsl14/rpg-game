@@ -1,7 +1,7 @@
 from __future__ import annotations
 from src.core import *
 from .spell_previews import LinePreview, AreaPreview, RectPreview, GustPreview
-from .spells import Fireball
+from .spells import Fireball, Waterball
 class SpellQueue(Sprite):
     def __init__(self, scene: MainScene) -> None:
         super().__init__(scene, "HUD")
@@ -13,6 +13,9 @@ class SpellQueue(Sprite):
         def placeholder_spell(*args, **kwargs):
             pass
 
+
+        # TODO: I think I want more spell interaction combos
+        # also make spell cd diffrernt from element cd
         self.spell_list = {
             "j": {
                 "aiming": {
@@ -20,7 +23,7 @@ class SpellQueue(Sprite):
                     "cooldown": 5,
                     "args": [],
                 },
-                "spell": placeholder_spell
+                "spell": Waterball
             },
             "k": {
                 "aiming": {

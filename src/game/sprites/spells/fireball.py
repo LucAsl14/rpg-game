@@ -19,12 +19,14 @@ class FireProjectile(Projectile):
         self.radius = 0
 
     def charge(self, progress: float) -> None:
+        self.set_no_collision(True)
         self.set_solidness(0.0)
         self.radius = self.rad * progress
 
     def release(self, mouse_pos: Vec) -> None:
+        self.set_no_collision(False)
+        self.set_solidness(0.0)
         self.radius = self.rad
-        self.set_solidness(1.0)
         self.apply_impulse((mouse_pos - self.pos).normalize() * 800)
 
     def draw(self, target: pygame.Surface) -> None:
