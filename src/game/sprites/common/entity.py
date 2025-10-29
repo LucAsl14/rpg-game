@@ -61,8 +61,9 @@ class Entity(Sprite):
     def apply_impulse(self, impulse: Vec) -> None:
         self.acc += impulse / self.game.dt
 
-    def take_damage(self, dmg: int) -> int:
-        # TODO: add argument that specifies source of damage and allow for selective damage immunity
+    def take_damage(self, dmg: int, source: str="normal") -> int:
+        """Apply damage to the entity and return the actual damage taken."""
+        # TODO: use source of damage to allow for selective damage immunity
         prev_hp = self.hp
         self.hp -= dmg
         return prev_hp - self.hp

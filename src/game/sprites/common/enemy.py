@@ -53,11 +53,14 @@ class Enemy(Entity):
             return True
         return False
 
-    def take_damage(self, dmg: int) -> int:
-        self.damaged_timer.reset()
-        if Debug.on("dmg_message"):
-            Log.debug(f"Enemy took {dmg} damage, HP: {self.hp} -> {max(self.hp - dmg, 0)}")
-        return super().take_damage(dmg)
+    def take_damage(self, dmg: int, source: str="normal") -> int:
+        hp = self.hp
+        dmg_taken = super().take_damage(dmg, source)
+        if dmg_taken > 0:
+            self.damaged_timer.reset()
+            if Debug.on("dmg_message"):
+                Log.debug(f"Enemy took {dmg} damage of {source} type, HP: {hp} -> {max(self.hp, 0)}")
+        return dmg_taken
 
     def draw(self, target: pygame.Surface) -> None:
         dmgtint = pygame.Surface(self.image.get_size()).convert_alpha()
