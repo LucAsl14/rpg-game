@@ -29,6 +29,7 @@ class WaterProjectile(Projectile):
     def __init__(self, scene: MainScene, master: Entity, pos: Vec) -> None:
         super().__init__(scene, master, pos, 1, 5, 5, 20)
         self.set_kill_on_collision(True)
+        self.set_no_collision(True)
         self.radius = 0
         self.exploding = False
         self.exploding_timer = Timer(0.05)
@@ -46,13 +47,11 @@ class WaterProjectile(Projectile):
         super().update(dt)
 
     def charge(self, progress: float) -> None:
-        self.set_no_collision(True)
-        self.set_solidness(0.0)
+        self.pos = self.master.pos.copy()
         self.radius = self.rad * progress
 
     def release(self, mouse_pos: Vec) -> None:
         self.set_no_collision(False)
-        self.set_solidness(1.0)
         self.radius = self.rad
         self.apply_impulse((mouse_pos - self.pos).normalize() * 400)
 

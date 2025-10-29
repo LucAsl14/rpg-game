@@ -7,6 +7,7 @@ class Projectile(Entity):
         super().__init__(scene, "DEFAULT", CircleHitbox(pos, rad), hp)
         # TODO: Add damage groups (projectiles from enemies don't damage other enemies, etc.)
         self.set_collision_ignore_entities(master)
+        self.master = master
         self.lifetime = lifetime
         self.rad = rad # initial radius
         self.damage = dmg

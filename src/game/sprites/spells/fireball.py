@@ -12,20 +12,20 @@ class Fireball(Spell):
         self.add_action("charge", projectile)
         self.add_action("call", projectile, "release", self["initial_mouse_pos"])
 
+# TODO: it seems fireball doesn't deal damage to waterball?
 class FireProjectile(Projectile):
     def __init__(self, scene: MainScene, master: Entity, pos: Vec) -> None:
         super().__init__(scene, master, pos, 1, 10, 5, 10)
         self.set_kill_on_collision(True)
+        self.set_no_collision(True)
         self.radius = 0
 
     def charge(self, progress: float) -> None:
-        self.set_no_collision(True)
-        self.set_solidness(0.0)
+        self.pos = self.master.pos.copy()
         self.radius = self.rad * progress
 
     def release(self, mouse_pos: Vec) -> None:
         self.set_no_collision(False)
-        self.set_solidness(0.0)
         self.radius = self.rad
         self.apply_impulse((mouse_pos - self.pos).normalize() * 800)
 

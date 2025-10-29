@@ -86,8 +86,11 @@ class Entity(Sprite):
 
         # enemies
         for entity in self.get_nearby_entities():
+            if entity.no_collision: continue
             if isinstance(entity, self.collision_ignore_classes): continue
+            if isinstance(self, entity.collision_ignore_classes): continue
             if entity in self.collision_ignore_entities: continue
+            if self in entity.collision_ignore_entities: continue
             if self is entity: continue
             if self.hitbox.is_colliding(entity.hitbox):
                 yield entity
