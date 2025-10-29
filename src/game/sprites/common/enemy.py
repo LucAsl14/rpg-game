@@ -55,11 +55,14 @@ class Enemy(Entity):
 
     def take_damage(self, dmg: int) -> int:
         self.damaged_timer.reset()
+        if Debug.on("dmg_message"):
+            Log.debug(f"Enemy took {dmg} damage, HP: {self.hp} -> {max(self.hp - dmg, 0)}")
         return super().take_damage(dmg)
 
     def draw(self, target: pygame.Surface) -> None:
         dmgtint = pygame.Surface(self.image.get_size()).convert_alpha()
         dmgtint.fill((200, 0, 0))
+        # TODO: hp bars should probably be a thing (some sprite?)
         if not self.damaged_timer.done:
             tinted_image = self.image.copy()
             tinted_image.blit(dmgtint, (0, 0), special_flags=BLEND_RGBA_MULT)

@@ -3,3 +3,4 @@ info = true
 hitbox = true
 grid = true
 spell_messages = false
+dmg_message = true
