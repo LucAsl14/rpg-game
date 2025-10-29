@@ -46,14 +46,16 @@ class Player(Entity):
         self.keys = pygame.key.get_pressed()
 
         # movement keys TODO: diagonal movement normalization
+        direction = Vec()
         if self.keys[K_w]:
-            self.apply_force(Vec(0, -PLAYER_ACC))
+            direction += Vec(0, -1)
         if self.keys[K_s]:
-            self.apply_force(Vec(0, PLAYER_ACC))
+            direction += Vec(0, 1)
         if self.keys[K_a]:
-            self.apply_force(Vec(-PLAYER_ACC, 0))
+            direction += Vec(-1, 0)
         if self.keys[K_d]:
-            self.apply_force(Vec(PLAYER_ACC, 0))
+            direction += Vec(1, 0)
+        self.apply_force(direction.normalize() * PLAYER_ACC)
         # Losing ~99.9% of the velocity after 1 second
         # k = -ln(1 - 0.999) = ~6.9
         self.apply_force(-self.vel * 6.9)
