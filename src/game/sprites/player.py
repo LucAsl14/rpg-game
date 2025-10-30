@@ -8,7 +8,7 @@ from .spell_queue import SpellQueue
 from src.game.sprites.common import Entity
 from .spells.waterball import Waterball
 from .spells.fireball import Fireball
-from .spells.wall_of_fire import WallOfFire
+from .spells.wall_of_light import WallOfLight
 
 from .basic_enemy import BasicEnemy
 
