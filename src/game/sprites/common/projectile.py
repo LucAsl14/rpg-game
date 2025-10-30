@@ -34,6 +34,10 @@ class Projectile(Entity):
                 return
             break # Only collide with the first entity
 
+        if self.hp <= 0:
+            self.kill()
+            return
+
         self.colliding_entities = current_colliding
 
         if self.kill_timer.done:
